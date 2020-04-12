@@ -18,7 +18,8 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'omniauth', '~> 1'
   gem.add_dependency 'omniauth-oauth2', '~> 1'
+  gem.add_dependency 'faraday'
 
-  # s.add_development_dependency 'dotenv', '>= 2.0'
+  # gem.add_development_dependency 'pry'
   # s.add_development_dependency 'sinatra', '>= 2.0'
 end

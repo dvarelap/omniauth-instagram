@@ -1,14 +1,15 @@
 require 'omniauth-oauth2'
+require 'faraday'
 
 module OmniAuth
   module Strategies
     class Instagram < OmniAuth::Strategies::OAuth2
-      option :client_options,         site: 'https://api.instagram.com',
+      option :client_options,         site: 'https://graph.instagram.com',
                                       authorize_url: 'https://api.instagram.com/oauth/authorize',
                                       token_url: 'https://api.instagram.com/oauth/access_token'
 
       def callback_url
-        full_host + script_name + callback_path
+        options[:callback_url] || full_host + script_name + callback_path
       end
 
       def request_phase
@@ -39,17 +40,8 @@ module OmniAuth
       end
 
       def raw_info
-        if options[:extra_data]
-          endpoint = '/users/self'
-          params = {}
-          access_token.options[:mode] = :query
-          access_token.options[:param_name] = 'access_token'
-          params['sig'] = generate_sig(endpoint, 'access_token' => access_token.token) if options[:enforce_signed_requests]
-          @data ||= access_token.get("/v1#{endpoint}", params: params).parsed['data'] || {}
-        else
-          @data ||= access_token.params['user']
-        end
-        @data
+        path    = "/me?access_token=#{access_token.token}&fields=id,username,account_type" 
+        @data ||= Faraday.get("#{options[:client_options][:site]}#{path}")
       end
 
       # You can pass +scope+ params to the auth request, if you need to set them dynamically.
