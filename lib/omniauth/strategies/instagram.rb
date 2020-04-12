@@ -41,7 +41,7 @@ module OmniAuth
 
       def raw_info
         path    = "/me?access_token=#{access_token.token}&fields=id,username,account_type" 
-        @data ||= Faraday.get("#{options[:client_options][:site]}#{path}")
+        @data ||= JSON.parse(Faraday.get("#{options[:client_options][:site]}#{path}").body)
       end
 
       # You can pass +scope+ params to the auth request, if you need to set them dynamically.
